@@ -54,6 +54,16 @@ init_db()
 # Steam helpers
 # ---------------------------------------------------------------------------
 
+async def fetch_global_percentages(client: httpx.AsyncClient) -> dict:
+    """Fetch global achievement completion percentages (no API key required)."""
+    url = "https://api.steampowered.com/ISteamUserStats/GetGlobalAchievementPercentagesForApp/v2/"
+    resp = await client.get(url, params={"gameid": APP_ID})
+    resp.raise_for_status()
+    data = resp.json()
+    achievements = data.get("achievementpercentages", {}).get("achievements", [])
+    return {a["name"]: a["percent"] for a in achievements}
+
+
 async def fetch_schema(client: httpx.AsyncClient) -> dict:
     """Fetch the full achievement schema (icons)."""
     url = "https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/"
@@ -108,9 +118,10 @@ async def get_achievements():
     New achievements are seeded: unlocked → done, locked → backlog.
     """
     async with httpx.AsyncClient() as client:
-        schema, player = await asyncio.gather(
+        schema, player, percentages = await asyncio.gather(
             fetch_schema(client),
             fetch_player_achievements(client),
+            fetch_global_percentages(client),
         )
 
     with get_db() as conn:
@@ -153,6 +164,7 @@ async def get_achievements():
                 "icon": s.get("icon", ""),
                 "icon_gray": s.get("icongray", ""),
                 "achieved": pdata.get("achieved") == 1,
+                "global_percent": round(percentages.get(api_name, 0.0), 1),
                 "state": persisted.get(api_name, "backlog"),
             }
         )

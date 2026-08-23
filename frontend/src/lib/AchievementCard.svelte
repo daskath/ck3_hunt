@@ -30,6 +30,10 @@
   {#if achievement.description}
     <p class="description">{achievement.description}</p>
   {/if}
+  <p class="percent">
+    <span class="percent-bar" style="width: {Math.min(achievement.global_percent, 100)}%"></span>
+    <span class="percent-label">{achievement.global_percent}% of players</span>
+  </p>
   <div class="actions">
     {#each STATES.filter((s) => s !== achievement.state) as s}
       <button class="move-btn {s}" on:click={() => move(s)}>
@@ -90,8 +94,34 @@
   .description {
     font-size: 0.78rem;
     color: #94a3b8;
-    margin: 0 0 10px 0;
+    margin: 0 0 8px 0;
     line-height: 1.4;
+  }
+  .percent {
+    position: relative;
+    margin: 0 0 10px 0;
+    height: 16px;
+    background: #2e3548;
+    border-radius: 4px;
+    overflow: hidden;
+    display: flex;
+    align-items: center;
+  }
+  .percent-bar {
+    position: absolute;
+    left: 0;
+    top: 0;
+    height: 100%;
+    background: #1e3a5f;
+    border-radius: 4px;
+    transition: width 0.3s;
+  }
+  .percent-label {
+    position: relative;
+    font-size: 0.68rem;
+    color: #93c5fd;
+    padding: 0 6px;
+    z-index: 1;
   }
   .actions {
     display: flex;
