@@ -164,7 +164,7 @@ async def get_achievements():
                 "icon": s.get("icon", ""),
                 "icon_gray": s.get("icongray", ""),
                 "achieved": pdata.get("achieved") == 1,
-                "global_percent": round(percentages.get(api_name, 0.0), 1),
+                "global_percent": percentages.get(api_name),
                 "state": persisted.get(api_name, "backlog"),
             }
         )
