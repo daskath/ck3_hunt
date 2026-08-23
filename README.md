@@ -1,6 +1,19 @@
-# Steam Achievement Kanban
+# Crusader Kings 3 Achievement Hunt Kanban
 
-A local Kanban board for tracking your Steam achievements — **Backlog / To Do / Done** — backed by SQLite so your progress survives restarts.
+A tool to keep track of the achievements I want to focus on during my hunt to get every Crusader Kings 3 achievement. Mostly AI generated.
+
+It's a local Kanban board for tracking the Steam achievements — **Backlog / To Do / Done** — backed by SQLite so the classification survives restarts.
+
+## How it works
+
+- On first load, achievements are fetched from Steam and seeded into SQLite:
+  - **Unlocked** → `Done`
+  - **Locked** → `Backlog`
+- If Steam shows a newly unlocked achievement that was in Backlog/To Do, it auto-promotes to **Done**.
+- All manual moves are persisted in SQLite immediately — they survive restarts.
+- Click **↻ Refresh** to re-sync with Steam at any time.
+
+---
 
 ## Stack
 
@@ -23,6 +36,8 @@ A local Kanban board for tracking your Steam achievements — **Backlog / To Do 
 | `STEAM_ID`      | Your 64-bit Steam ID (e.g. from https://steamid.io) |
 | `APP_ID`        | The Steam App ID of the game (visible in the store URL or from https://steamdb.info/) |
 
+CK3's APP ID is 1158310.
+
 ### 2. Configure environment
 
 Copy `.env.example` to `.env` and fill in your values:
@@ -35,7 +50,7 @@ cp .env.example .env
 ```
 STEAM_API_KEY=XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX
 STEAM_ID=76561198XXXXXXXXX
-APP_ID=730
+APP_ID=1158310
 ```
 
 ---
@@ -61,17 +76,6 @@ npm run dev
 ```
 
 Open **http://localhost:5173** in your browser.
-
----
-
-## How it works
-
-- On first load, achievements are fetched from Steam and seeded into SQLite:
-  - **Unlocked** → `Done`
-  - **Locked** → `Backlog`
-- If Steam shows a newly unlocked achievement that was in Backlog/To Do, it auto-promotes to **Done**.
-- All manual moves are persisted in SQLite immediately — they survive restarts.
-- Click **↻ Refresh** to re-sync with Steam at any time.
 
 ---
 
