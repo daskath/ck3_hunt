@@ -21,7 +21,7 @@ A local Kanban board for tracking your Steam achievements — **Backlog / To Do 
 |----------------|-----------------|
 | `STEAM_API_KEY` | https://steamcommunity.com/dev/apikey |
 | `STEAM_ID`      | Your 64-bit Steam ID (e.g. from https://steamid.io) |
-| `APP_ID`        | The Steam App ID of the game (visible in the store URL) |
+| `APP_ID`        | The Steam App ID of the game (visible in the store URL or from https://steamdb.info/) |
 
 ### 2. Configure environment
 

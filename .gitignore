@@ -1,3 +1,5 @@
 .env
 .zdx
 backend/.venv/
+backend/achievements.db
+backend/__pycache__/
