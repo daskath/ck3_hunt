@@ -6,7 +6,7 @@
   let achievements = [];
   let loading = true;
   let error = null;
-  let gameName = "";
+  let achievement_count = "";
 
   const COLUMNS = [
     { id: "backlog", title: "Backlog", color: "#64748b" },
@@ -32,7 +32,7 @@
       achievements = await fetchAchievements();
       const total = achievements.length;
       const done  = achievements.filter((a) => a.state === "done").length;
-      gameName = `${done} / ${total} achievements`;
+      achievement_count = `${done} / ${total} achievements`;
     } catch (e) {
       error = e.message;
     } finally {
@@ -59,9 +59,9 @@
   <header>
     <div class="header-inner">
       <div class="title-block">
-        <h1>🎮 Steam Achievement Tracker</h1>
+        <h1>🏹 CK3 Achievement Hunt</h1>
         {#if !loading && !error}
-          <span class="subtitle">{gameName}</span>
+          <span class="subtitle">{achievement_count}</span>
         {/if}
       </div>
       <button class="refresh-btn" on:click={load} disabled={loading}>
