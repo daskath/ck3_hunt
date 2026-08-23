@@ -1,3 +1,4 @@
+import asyncio
 import os
 import sqlite3
 import httpx
@@ -53,6 +54,20 @@ init_db()
 # Steam helpers
 # ---------------------------------------------------------------------------
 
+async def fetch_schema(client: httpx.AsyncClient) -> dict:
+    """Fetch the full achievement schema (icons)."""
+    url = "https://api.steampowered.com/ISteamUserStats/GetSchemaForGame/v2/"
+    resp = await client.get(url, params={"key": STEAM_API_KEY, "appid": APP_ID})
+    resp.raise_for_status()
+    data = resp.json()
+    achievements = (
+        data.get("game", {})
+        .get("availableGameStats", {})
+        .get("achievements", [])
+    )
+    return {a["name"]: a for a in achievements}
+
+
 async def fetch_player_achievements(client: httpx.AsyncClient) -> dict:
     """Fetch achievements including display name and description via l=english."""
     url = "https://api.steampowered.com/ISteamUserStats/GetPlayerAchievements/v1/"
@@ -93,7 +108,10 @@ async def get_achievements():
     New achievements are seeded: unlocked → done, locked → backlog.
     """
     async with httpx.AsyncClient() as client:
-        player = await fetch_player_achievements(client)
+        schema, player = await asyncio.gather(
+            fetch_schema(client),
+            fetch_player_achievements(client),
+        )
 
     with get_db() as conn:
         rows = conn.execute("SELECT api_name, state FROM achievement_states").fetchall()
@@ -126,13 +144,14 @@ async def get_achievements():
 
     result = []
     for api_name, pdata in player.items():
+        s = schema.get(api_name, {})
         result.append(
             {
                 "api_name": api_name,
                 "display_name": pdata.get("name", api_name),
                 "description": pdata.get("description", ""),
-                "icon": "",
-                "icon_gray": "",
+                "icon": s.get("icon", ""),
+                "icon_gray": s.get("icongray", ""),
                 "achieved": pdata.get("achieved") == 1,
                 "state": persisted.get(api_name, "backlog"),
             }
