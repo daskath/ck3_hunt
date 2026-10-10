@@ -104,7 +104,7 @@ async def fetch_player_achievements(client: httpx.AsyncClient) -> dict:
 # ---------------------------------------------------------------------------
 
 class StateUpdate(BaseModel):
-    state: str  # "backlog" | "todo" | "done"
+    state: str  # "backlog" | "todo" | "done" | "driveby"
 
 
 # ---------------------------------------------------------------------------
@@ -136,9 +136,9 @@ async def get_achievements():
                 to_insert.append((api_name, default_state))
                 persisted[api_name] = default_state
 
-        # Also handle newly unlocked achievements that were previously in backlog/todo
+        # Also handle newly unlocked achievements that were previously in backlog/todo/driveby
         for api_name, pdata in player.items():
-            if pdata.get("achieved") == 1 and persisted.get(api_name) in ("backlog", "todo"):
+            if pdata.get("achieved") == 1 and persisted.get(api_name) in ("backlog", "todo","driveby"):
                 # Auto-promote to done on fresh unlock
                 persisted[api_name] = "done"
                 conn.execute(
@@ -170,15 +170,15 @@ async def get_achievements():
         )
 
     # Sort: done last, then alphabetically
-    state_order = {"backlog": 0, "todo": 1, "done": 2}
+    state_order = {"backlog": 0, "driveby": 1, "todo": 2, "done": 3}
     result.sort(key=lambda x: (state_order.get(x["state"], 0), x["display_name"].lower()))
     return result
 
 
 @app.put("/achievements/{api_name}/state")
 async def update_state(api_name: str, body: StateUpdate):
-    if body.state not in ("backlog", "todo", "done"):
-        raise HTTPException(status_code=400, detail="Invalid state. Must be backlog, todo, or done.")
+    if body.state not in ("backlog", "todo", "done", "driveby"):
+        raise HTTPException(status_code=400, detail="Invalid state. Must be backlog, driveby, todo, or done.")
     with get_db() as conn:
         conn.execute(
             "INSERT OR REPLACE INTO achievement_states (api_name, state) VALUES (?, ?)",

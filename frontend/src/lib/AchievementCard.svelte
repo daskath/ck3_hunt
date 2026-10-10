@@ -2,8 +2,8 @@
   export let achievement;
   export let onMove;
 
-  const STATES = ["backlog", "todo", "done"];
-  const LABELS = { backlog: "Backlog", todo: "To Do", done: "Done" };
+  const STATES = ["backlog", "driveby", "todo", "done"];
+  const LABELS = { backlog: "Backlog", driveby: "Drive by's", todo: "To Do", done: "Done" };
 
   function move(newState) {
     onMove(achievement.api_name, newState);
@@ -143,6 +143,10 @@
   .move-btn.backlog {
     background: #374151;
     color: #d1d5db;
+  }
+  .move-btn.driveby {
+    background: #205396;
+    color: #89c0ff;
   }
   .move-btn.todo {
     background: #1e3a5f;

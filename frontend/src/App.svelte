@@ -9,9 +9,10 @@
   let achievement_count = "";
 
   const COLUMNS = [
-    { id: "backlog", title: "Backlog", color: "#64748b" },
-    { id: "todo",    title: "To Do",   color: "#3b82f6" },
-    { id: "done",    title: "Done",    color: "#22c55e" },
+    { id: "backlog", title: "Backlog",    color: "#64748b" },
+    { id: "driveby", title: "Drive by's", color: "#6191d1" },
+    { id: "todo",    title: "To Do",      color: "#3b82f6" },
+    { id: "done",    title: "Done",       color: "#22c55e" },
   ];
 
   $: byState = Object.fromEntries(
